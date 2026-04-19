@@ -1,20 +1,37 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+# 👨‍💻 BAIDOO MARTIN KOFI MEDES
+
+### Développeur Web | React | Node.js | Automation
+
 </div>
 
-# Run and deploy your AI Studio app
+---
 
-This contains everything you need to run your app locally.
+## 🚀 Mon Portfolio
 
-View your app in AI Studio: https://ai.studio/apps/aa3f59e5-e8fd-4748-acff-fd41d9f103c4
+Bienvenue sur mon portfolio.  
+Je développe des applications web modernes et des solutions automatisées.
 
-## Run Locally
+---
 
-**Prerequisites:**  Node.js
+## 🧠 Technologies utilisées
 
+- ⚛️ React
+- 🎨 Tailwind CSS
+- ⚙️ n8n (Automatisation & Formulaire)
+- 🟢 Node.js
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+---
+
+## 📩 Contact
+
+Utilise le formulaire sur le site pour m’envoyer un message directement 📧
+
+---
+
+## ▶️ Lancer le projet en local
+
+```bash
+npm install
+npm run dev
