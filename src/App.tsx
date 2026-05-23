@@ -35,10 +35,80 @@ export default function App() {
     restDelta: 0.001
   });
 
+  const fallbackData = {
+    projects: [
+      { name: "UPB Student's", description: "Plateforme de gestion pour les étudiants de l'UPB.", image: "https://picsum.photos/seed/upb_students/800/600", tags: "React,Node.js,SQLite", link: "#" },
+      { name: "UPB La bibliothèque", description: "Système de gestion de bibliothèque numérique.", image: "https://picsum.photos/seed/upb_lib/800/600", tags: "Java,Spring Boot,PostgreSQL", link: "#" },
+      { name: "Metro", description: "Application de suivi en temps réel du réseau de métro.", image: "https://picsum.photos/seed/metro/800/600", tags: "Flutter,Firebase,Maps API", link: "#" }
+    ],
+    skills: [
+      { category: "Développement", items: ["React", "TypeScript", "Java", "Python", "Flutter", "HTML & CSS", "Tailwind CSS"] },
+      { category: "Data & BI", items: ["SQL", "Analyse de données"] },
+      { category: "Outils", items: ["Git", "GitHub", "n8n", "SQL", "Power BI", "Excel", "R Studio"] }
+    ],
+    stats: [
+      { label: "Projets", value: "5+", trend: "+10%", icon_type: "briefcase" },
+      { label: "Lignes de code", value: "15k", trend: "+2k", icon_type: "code" },
+      { label: "Techs", value: "5+", trend: "+2", icon_type: "cpu" },
+      { label: "KPI Perso", value: "98%", trend: "Optimal", icon_type: "activity" }
+    ],
+    chartData: [
+      { name: 'Jan', code: 4000, projects: 2 },
+      { name: 'Mar', code: 3000, projects: 3 },
+      { name: 'May', code: 2000, projects: 5 },
+      { name: 'Jul', code: 2780, projects: 4 },
+      { name: 'Sep', code: 1890, projects: 6 },
+      { name: 'Nov', code: 2390, projects: 8 },
+    ],
+    techDistribution: [
+      { subject: 'React', value: 95, fullMark: 100 },
+      { subject: 'TypeScript', value: 90, fullMark: 100 },
+      { subject: 'Node.js', value: 85, fullMark: 100 },
+      { subject: 'SQL', value: 80, fullMark: 100 },
+      { subject: 'UI/UX', value: 85, fullMark: 100 },
+      { subject: 'Data Eng', value: 75, fullMark: 100 },
+    ],
+    certificates: [
+      { name: "AWS Certified Solutions Architect", issuer: "Amazon Web Services", date: "Janvier 2024", description: "Certification validant la capacité à concevoir des systèmes distribués sur AWS.", image: "https://picsum.photos/seed/aws/800/600", link: "#" },
+      { name: "Google Data Analytics Professional", issuer: "Google", date: "Mars 2023", description: "Maîtrise de l'analyse de données avec SQL, R et Tableau.", image: "https://picsum.photos/seed/google/800/600", link: "#" },
+      { name: "CompTIA Security+", issuer: "CompTIA", date: "Décembre 2023", description: "Validation des compétences de base en cybersécurité et conformité.", image: "https://picsum.photos/seed/security/800/600", link: "#" }
+    ],
+    experience: [
+      {
+        type: 'exp',
+        title: 'Chef Informaticien',
+        subtitle: 'Concours Génie UPB',
+        date: '2024 - Présent',
+        description: 'Responsable de l\'équipe informatique lors du concours Génie UPB. Supervision du développement de solutions innovantes et coordination technique des projets.'
+      },
+      {
+        type: 'edu',
+        title: 'Licence en MIAGE',
+        subtitle: 'Université Polytechnique de Bingerville (UPB)',
+        date: '2021 - 2024',
+        description: 'Méthodes Informatiques Appliquées à la Gestion des Entreprises. Formation d\'excellence alliant informatique de pointe et gestion managériale.'
+      },
+      {
+        type: 'edu',
+        title: 'Baccalauréat D',
+        subtitle: 'Institut Froebel',
+        date: '2021',
+        description: 'Baccalauréat Scientifique (Série D). Obtention du diplôme avec une solide base en mathématiques et sciences de la vie.'
+      }
+    ],
+    cvUrl: ""
+  };
+
   const fetchData = async () => {
-    const res = await fetch('/api/data');
-    const data = await res.json();
-    setPortfolioData(data);
+    try {
+      const res = await fetch('/api/data');
+      if (!res.ok) throw new Error('API status not OK');
+      const data = await res.json();
+      setPortfolioData(data);
+    } catch (error) {
+      console.warn('Backend API offline, using fallback static data.', error);
+      setPortfolioData(fallbackData);
+    }
   };
 
   useEffect(() => {
