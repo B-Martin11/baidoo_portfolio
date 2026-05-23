@@ -1,8 +1,13 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Mail, Github, Linkedin, Send, Download } from 'lucide-react';
+import { Mail, Send } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
-export const ContactSection = ({ cvUrl }) => {
+interface ContactSectionProps {
+  cvUrl?: string;
+}
+
+export const ContactSection: React.FC<ContactSectionProps> = ({ cvUrl }) => {
   const theme = 'dark';
 
   const [formData, setFormData] = React.useState({
@@ -12,34 +17,52 @@ export const ContactSection = ({ cvUrl }) => {
     message: ''
   });
 
-  const handleChange = (e) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [status, setStatus] = React.useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setStatus({ type: null, message: '' });
+
+    const templateParams = {
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+      title: formData.subject || 'Nouveau message'
+    };
 
     try {
-      const response = await fetch("http://localhost:5678/webhook/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      });
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_xxxxxx',
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_xxxxxx',
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'your_public_key'
+      );
 
-      if (response.ok) {
-        alert("Message envoyé ✅");
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      } else {
-        alert("Erreur lors de l'envoi ❌");
-      }
+      setStatus({
+        type: 'success',
+        message: 'Votre message a bien été envoyé ! Je vous répondrai dans les plus brefs délais. ✅'
+      });
+      setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
-      console.error(error);
-      alert("Erreur réseau ❌");
+      console.error('EmailJS Error:', error);
+      setStatus({
+        type: 'error',
+        message: "Une erreur est survenue lors de l'envoi. Veuillez réessayer ou me contacter directement par e-mail. ❌"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -83,8 +106,9 @@ export const ContactSection = ({ cvUrl }) => {
                 placeholder="Nom"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white"
+                className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300"
                 required
+                disabled={isSubmitting}
               />
 
               <input
@@ -93,8 +117,9 @@ export const ContactSection = ({ cvUrl }) => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white"
+                className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300"
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -104,7 +129,8 @@ export const ContactSection = ({ cvUrl }) => {
               placeholder="Sujet"
               value={formData.subject}
               onChange={handleChange}
-              className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white"
+              className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300"
+              disabled={isSubmitting}
             />
 
             <textarea
@@ -113,12 +139,44 @@ export const ContactSection = ({ cvUrl }) => {
               placeholder="Message"
               value={formData.message}
               onChange={handleChange}
-              className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white"
+              className="w-full px-5 py-4 rounded-xl bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all duration-300 resize-none"
               required
+              disabled={isSubmitting}
             />
 
-            <button className="w-full py-5 bg-orange-500 text-white rounded-xl flex justify-center gap-2">
-              Envoyer <Send className="w-5 h-5" />
+            {status.type && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-4 rounded-xl text-sm font-medium ${
+                  status.type === 'success' 
+                    ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' 
+                    : 'bg-rose-500/10 border border-rose-500/20 text-rose-400'
+                }`}
+              >
+                {status.message}
+              </motion.div>
+            )}
+
+            <button 
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full py-5 text-white rounded-xl flex justify-center items-center gap-2 font-semibold transition-all duration-300 ${
+                isSubmitting 
+                  ? 'bg-slate-700 cursor-not-allowed opacity-70' 
+                  : 'bg-orange-500 hover:bg-orange-600 active:scale-[0.98] cursor-pointer shadow-lg shadow-orange-500/25'
+              }`}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  Envoi en cours...
+                </>
+              ) : (
+                <>
+                  Envoyer <Send className="w-5 h-5" />
+                </>
+              )}
             </button>
 
           </form>
