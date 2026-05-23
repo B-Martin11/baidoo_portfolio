@@ -365,7 +365,7 @@ export default function App() {
           >
             <div className="aspect-[4/5] glass rounded-[40px] overflow-hidden relative group border-white/10 shadow-2xl">
               <img 
-                src="/Images/pic5.png"
+                src="/images/pic5.PNG"
                alt="BAIDOO MARTIN KOFI MEDES"
               className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
   />
